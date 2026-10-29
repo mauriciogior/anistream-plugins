@@ -1,0 +1,7 @@
+plugin/target/
+node_modules/
+.wrangler/
+.dev.vars
+.env
+dist/
+*.log

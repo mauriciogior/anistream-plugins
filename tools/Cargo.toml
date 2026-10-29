@@ -1,0 +1,23 @@
+[workspace]
+[package]
+name = "ani-cli-plugin-tools"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "GPL-3.0-or-later"
+[dependencies]
+anistream-plugin = { git = "https://github.com/bitknox/anistream", rev = "811ac0610eb31168a3db38980ca9fde1c5818985", features = ["interpret"] }
+anistream-net = { git = "https://github.com/bitknox/anistream", rev = "811ac0610eb31168a3db38980ca9fde1c5818985" }
+anistream-core = { git = "https://github.com/bitknox/anistream", rev = "811ac0610eb31168a3db38980ca9fde1c5818985" }
+anistream-store-core = { git = "https://github.com/bitknox/anistream", rev = "811ac0610eb31168a3db38980ca9fde1c5818985" }
+anyhow = "1"
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+[profile.dev]
+debug = 0
+incremental = false
+
+[dev-dependencies]
+anistream-plugin-store = { git = "https://github.com/bitknox/anistream", rev = "811ac0610eb31168a3db38980ca9fde1c5818985" }
+reqwest = { version = "0.13", features = ["json"] }
+url = "2"

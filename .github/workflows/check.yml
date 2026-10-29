@@ -1,0 +1,55 @@
+name: Build plugin and store
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          targets: wasm32-wasip2
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            plugin
+            tools
+      - run: cargo test --locked --manifest-path plugin/Cargo.toml --lib
+      - run: cargo clippy --locked --manifest-path plugin/Cargo.toml --all-targets -- -D warnings
+      - run: cargo fmt --manifest-path plugin/Cargo.toml -- --check
+      - run: ./scripts/build-plugin.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.30
+      - run: bun install --cwd store --frozen-lockfile
+      - run: ./scripts/test-store.sh
+        env:
+          WRANGLER_SEND_METRICS: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ani-cli-plugin
+          path: |
+            dist/ani-cli.wasm
+            dist/ani-cli.wasm.sha256
+  store:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: store
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.30
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+        env:
+          WRANGLER_SEND_METRICS: 'false'
