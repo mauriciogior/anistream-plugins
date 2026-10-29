@@ -71,11 +71,13 @@ cannot implement the store's signed index, invite and owner operations on its ow
 cd store
 bun install --frozen-lockfile
 bunx wrangler login
+bunx wrangler r2 bucket create anistream-ani-cli-files
 bunx wrangler deploy
 bunx wrangler secret put ANISTREAM_STORE_SETUP_CODE
 ```
 
-Wrangler creates the D1 database and R2 bucket when they have no IDs in the config.
+Wrangler creates the D1 database when it has no ID in the config. Create the named R2
+bucket before deploying; skip the bucket-create command when it already exists.
 R2 must be enabled for the account. Review Cloudflare's current billing and limits
 before enabling a paid plan. The store cannot be claimed until the setup secret exists.
 
